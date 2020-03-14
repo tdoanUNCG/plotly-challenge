@@ -83,11 +83,14 @@ d3.json(url).then(function(data){
     Plotly.newPlot('bar',bar_data,layout);
 
     var trace2 = {
-        y: sortedBySampleValues[0].sample_values,
         x: sortedBySampleValues[0].otu_ids,
+        y: sortedBySampleValues[0].sample_values,
         mode: 'markers',
         marker: {
-            size: [0,20,40,60,80,100,120,140,160,180]
+            size: sortedBySampleValues[0].sample_values,
+            sizeref: 0.03,
+            sizemode: 'area',
+            color: sortedBySampleValues[0].otu_ids
         }
     };
 
@@ -101,7 +104,6 @@ d3.json(url).then(function(data){
     };
 
     Plotly.newPlot('bubble',bubble_data,bubble_layout);
-    //console.log(bubbleYVal);
 
 });
 
@@ -116,6 +118,8 @@ function optionChanged(){
         // sort sample_values
         var sortedBySampleValues = data.samples.sort((a,b)=>a.sample_values-b.sample_values);
         console.log(sortedBySampleValues[idData].sample_values.slice(0,10));
+        var bubbleXVal = sortedBySampleValues[idData].sample_values;
+        console.log(bubbleXVal);
 
         // grabs id data based on idx value of names
         var yVal = sortedBySampleValues[idData].otu_ids.map(String).slice(0,10).reverse();
@@ -156,6 +160,29 @@ function optionChanged(){
 
         //console.log(sortedBySampleValues[0].id);
         //console.log(data.metadata[0]);
+        var trace2 = {
+            x: sortedBySampleValues[idData].otu_ids,
+            y: bubbleXVal,
+            mode: 'markers',
+            marker: {
+                size: sortedBySampleValues[idData].sample_values,
+                sizeref: 0.03,
+                sizemode: 'area',
+                color: sortedBySampleValues[idData].otu_ids
+            }
+        };
+
+        var bubble_data = [trace2];
+
+        var bubble_layout = {
+            title: 'title',
+            showlegend: false,
+            height: 600,
+            width: 1000
+        };
+
+        Plotly.newPlot('bubble',bubble_data,bubble_layout);
+        //console.log(bubbleYVal);
 
         // chart stuff
 
@@ -182,26 +209,9 @@ function optionChanged(){
         });
 
         //console.log(data.metadata[idData].id);
-        var trace2 = {
-            x: sortedBySampleValues[idData].sample_values.slice(0,10).reverse(),
-            y: sortedBySampleValues[idData].otu_ids.slice(0,10).reverse(),
-            mode: 'markers',
-            marker: {
-                size: [40,60,80,100]
-            }
-        };
-
-        var bubble_data = [trace2];
-
-        var bubble_layout = {
-            title: 'title',
-            showlegend: false,
-            height: 600,
-            width: 600
-        };
-
-        Plotly.newPlot('bubble',bubble_data,bubble_layout);
-        console.log(bubbleYVal);
 
     
 };
+
+// separate function for charts
+// init() - selector that refers to the drop down 
