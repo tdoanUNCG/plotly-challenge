@@ -114,6 +114,7 @@ function optionChanged(){
     console.log(idData);
 
     // grab samples.json data with d3
+    //this goes on the chart()
     d3.json(url).then(function(data){
         // sort sample_values
         var sortedBySampleValues = data.samples.sort((a,b)=>a.sample_values-b.sample_values);
@@ -212,6 +213,48 @@ function optionChanged(){
 
     
 };
+
+
+function char(sample) {
+
+}
+
+function buildMetadata(sample){
+
+    d3.json(url).then((data) => {
+        var metadata = data.metadata;
+        var chosenMetaData = metadata.filter(metaId => metaId.id == sample);
+        var result = chosenMetaData[0]
+        var panel = d3.select("#sample-metadata");
+        panel.html("");
+        Object.entries(result).forEach(([key,value])=>{
+            panel.append('h6').text(`${key}: ${value}`)
+        });
+
+    });
+}
+
+function init() {
+    var selector = d3.select("#selDataset");
+    d3.json('sample.json').then((data) => {
+        var namelist = data.names;
+
+        namelist.forEach((sample) => {
+            selector
+                .text(sample)
+        });
+
+    });
+    var firstSample = namelist[0]
+    char(firstSample);
+    metadata(firstSample)
+    
+}
+
+function optionChanged(newSample) {
+    char(newSample);
+    metadata(newSample);
+}
 
 // separate function for charts
 // init() - selector that refers to the drop down 
